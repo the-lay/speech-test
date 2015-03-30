@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script goes through every .flac file in audio folder, 
+# This script goes through every .mp3 file in audio folder, 
 # sends them to Yandex Speech Cloud service and records the results.
 
 # Part of POST request is UUID. On my linux machine I can generate it

@@ -1,0 +1,4 @@
+chmod +x yandex_speech.sh
+chmod +x google_speech.sh
+./yandex_speech.sh
+./google_speech.sh
