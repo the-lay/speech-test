@@ -1,0 +1,15 @@
+это пример записи русской речи без фонового шума  (./AUDIO/RU_CLEAN.MP3)
+Это пример записи русской речи без фонового шума  (./AUDIO/RU_CLEAN.MP3)
+Words: 8 Correct: 7 Errors: 1 Percent correct = 87.50% Error = 12.50% Accuracy = 87.50%
+Insertions: 0 Deletions: 0 Substitutions: 1
+это событие чрезвычайно разозлило массу людей и  было расценено общественным мнением как ложный шаг  (./AUDIO/RU_HITCHHIKERS_GUIDE_1.MP3)
+Это событие чрезвычайно разозлило масса людей и  было расценено общественным мнением как ложный шаг  (./AUDIO/RU_HITCHHIKERS_GUIDE_1.MP3)
+Words: 14 Correct: 12 Errors: 2 Percent correct = 85.71% Error = 14.29% Accuracy = 85.71%
+Insertions: 0 Deletions: 0 Substitutions: 2
+ресторан у  конца вселенной одно из самых необычных заведений общественного питания какие только знала история  (./AUDIO/RU_HITCHHIKERS_GUIDE_2.MP3)
+Ресторан у  конца вселенной 1        из самых необычных заведений общественного питания какие только знал   историю  (./AUDIO/RU_HITCHHIKERS_GUIDE_2.MP3)
+Words: 15 Correct: 11 Errors: 4 Percent correct = 73.33% Error = 26.67% Accuracy = 73.33%
+Insertions: 0 Deletions: 0 Substitutions: 4
+TOTAL Words: 37 Correct: 30 Errors: 7
+TOTAL Percent correct = 81.08% Error = 18.92% Accuracy = 81.08%
+TOTAL Insertions: 0 Deletions: 0 Substitutions: 7

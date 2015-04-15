@@ -1,0 +1,6 @@
+1. Make sure Node.js, NPM and *ffmpeg* is properly installed.
+2. Run `npm install` in this folder to install all dependencies.
+3. Copy your audio files to `audio/` folder.
+4. Fill `reference.txt` in format of `text text text (filename.mp3)`
+5. Run `node index.js` in terminal/console.
+6. Observe results in the same terminal/console.
