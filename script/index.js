@@ -28,18 +28,26 @@ var generalOpts = {
 // Helpers
 var getGoogleTranscript = function(file, callback) {
 	var opts = googleOpts,
-		finalTranscript,
-		deferred = Q.defer();
+		finalTranscript;
 	opts.file = file;
 
+	// google(opts,function(err, results) {
+	// 	if (err) throw err;
+
+	// 	finalTranscript = results[0].result[0].alternative[results[0].result_index].transcript + ' (' + file + ')';
+	// 	console.log(finalTranscript);
+	// 	callback(finalTranscript);
+
+	// });
+
 	var stream = google(opts, function(err, results) {
-		if (err) deferred.reject(err);
+		if (err) throw err;
 
 		// Piping and concatenating all results
 		stream.pipe(concat(function(data) {
 			// such comfort, much nesting
 			finalTranscript = results[0].result[0].alternative[results[0].result_index].transcript + ' (' + file + ')';
-			console.log(finalTranscript);
+			// console.log(finalTranscript);
 			callback(finalTranscript);
 		}));
 	});
@@ -79,13 +87,11 @@ fs.readdir('./audio', function(err, files) {
 		var promises = [];
 
 		// Get transcripts of every .mp3 files in folder
-		process.stdout.write('Found following .mp3 files:');
+		console.log('Starting transcripting.');
 		files.forEach(function(file) {
 			if (file.substr(file.length-4) === '.mp3') { 
 				var yDeferred = Q.defer();
-					// gDeferred = Q.defer();
-
-				process.stdout.write(' ' + file + ' ');
+					gDeferred = Q.defer();
 
 				getYandexTranscript('./audio/'+file, function(result) {
 					// Appending results transcript to hyp_yandex.txt
@@ -94,16 +100,16 @@ fs.readdir('./audio', function(err, files) {
 					});
 				});
 
-				// getGoogleTranscript('./audio/'+file, function(result) {
-				// 	// Appending results transcript to hyp_google.txt
-				// 	fs.appendFile(generalOpts.googleHyp, result+'\n', function() {
-				// 		console.log('\ngoogle for ' + file + ': ' + result);
-				// 		gDeferred.resolve();
-				// 	});
-				// });
+				getGoogleTranscript('./audio/'+file, function(result) {
+					// Appending results transcript to hyp_google.txt
+					fs.appendFile(generalOpts.googleHyp, result+'\n', function() {
+						console.log('google for ' + file + ': ' + result);
+						gDeferred.resolve();
+					});
+				});
 
 				promises.push(yDeferred.promise);
-				// promises.push(gDeferred.promise);
+				promises.push(gDeferred.promise);
 			}
 		});
 		return Q.all(promises);
@@ -111,7 +117,7 @@ fs.readdir('./audio', function(err, files) {
 
 	// When all transcripts are done, run wer testing utility
 	processFiles().then(function() {
-		console.log('\nTranscripting done.\nRunning word_align script on results...');
+		console.log('\nTranscripting done.\nRunning word_align.pl script on results...');
 
 		if (exec('./word_align.pl audio/reference.txt results/hyp_yandex.txt > results/yandex_results.txt', {silent:true}).code !== 0) {
 			console.log('Analysis of Yandex results failed... ');
@@ -119,11 +125,11 @@ fs.readdir('./audio', function(err, files) {
 			console.log('Analysis of Yandex results successful!');
 		}
 
-		// if (exec('./word_align.pl audio/reference.txt results/hyp_google.txt > results/google_result.txt', {silent:true}).code !== 0) {
-		// 	console.log('Analysis of Google results failed... ');
-		// } else {
-		// 	console.log('Analysis of Google results successful!');
-		// }
+		if (exec('./word_align.pl audio/reference.txt results/hyp_google.txt > results/google_results.txt', {silent:true}).code !== 0) {
+			console.log('Analysis of Google results failed... ');
+		} else {
+			console.log('Analysis of Google results successful!');
+		}
 
 	}).done(function() {
 		// Show results of word_align.pl in terminal
@@ -134,10 +140,10 @@ fs.readdir('./audio', function(err, files) {
 			console.log(data.substr(data.indexOf('TOTAL')));
 		});
 
-		// fs.readFile('./results/google_results.txt', 'utf8', function(err, data) {
-		// 	if (err) throw err;
-		// 	console.log('\x1b[31m', '\nFinal Google results', '\x1b[0m');
-		// 	console.log(data.substr(data.indexOf('TOTAL')));
-		// });
+		fs.readFile('./results/google_results.txt', 'utf8', function(err, data) {
+			if (err) throw err;
+			console.log('\x1b[31m', '\nFinal Google results', '\x1b[0m');
+			console.log(data.substr(data.indexOf('TOTAL')));
+		});
 	});
 });
