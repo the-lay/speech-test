@@ -27,33 +27,22 @@ var generalOpts = {
 
 // Helpers
 var getGoogleTranscript = function(file, callback) {
-	var opts = googleOpts,
+	var opts = JSON.parse(JSON.stringify(googleOpts)), //copy of googleOpts without reference
 		finalTranscript;
 	opts.file = file;
 
-	// google(opts,function(err, results) {
-	// 	if (err) throw err;
-
-	// 	finalTranscript = results[0].result[0].alternative[results[0].result_index].transcript + ' (' + file + ')';
-	// 	console.log(finalTranscript);
-	// 	callback(finalTranscript);
-
-	// });
-
 	var stream = google(opts, function(err, results) {
 		if (err) throw err;
-
 		// Piping and concatenating all results
 		stream.pipe(concat(function(data) {
 			// such comfort, much nesting
 			finalTranscript = results[0].result[0].alternative[results[0].result_index].transcript + ' (' + file + ')';
-			// console.log(finalTranscript);
 			callback(finalTranscript);
 		}));
 	});
 };
 var getYandexTranscript = function(file, callback) {
-	var opts = yandexOpts,
+	var opts = JSON.parse(JSON.stringify(yandexOpts)), //copy of yandexOpts without reference
 		finalTranscript;
 	opts.file = file;
 
@@ -90,20 +79,19 @@ fs.readdir('./audio', function(err, files) {
 		console.log('Starting transcripting.');
 		files.forEach(function(file) {
 			if (file.substr(file.length-4) === '.mp3') { 
-				var yDeferred = Q.defer();
+				var yDeferred = Q.defer(),
 					gDeferred = Q.defer();
 
 				getYandexTranscript('./audio/'+file, function(result) {
 					// Appending results transcript to hyp_yandex.txt
-					fs.appendFile(generalOpts.yandexHyp, result+'\n', function() {
+					fs.appendFile(generalOpts.yandexHyp, result+'\n', function(fsErr) {
 						yDeferred.resolve();
 					});
 				});
 
 				getGoogleTranscript('./audio/'+file, function(result) {
 					// Appending results transcript to hyp_google.txt
-					fs.appendFile(generalOpts.googleHyp, result+'\n', function() {
-						console.log('google for ' + file + ': ' + result);
+					fs.appendFile(generalOpts.googleHyp, result+'\n', function(fsErr) {
 						gDeferred.resolve();
 					});
 				});
@@ -117,20 +105,31 @@ fs.readdir('./audio', function(err, files) {
 
 	// When all transcripts are done, run wer testing utility
 	processFiles().then(function() {
-		console.log('\nTranscripting done.\nRunning word_align.pl script on results...');
+		var gDeferred = Q.defer(),
+			yDeferred = Q.defer();
 
-		if (exec('./word_align.pl audio/reference.txt results/hyp_yandex.txt > results/yandex_results.txt', {silent:true}).code !== 0) {
+		console.log('Transcripting done.\nRunning word_align.pl script on results...');
+
+		if (exec('./word_align.pl audio/reference.txt results/hyp_yandex.txt > results/yandex_results.txt').code !== 0) {
 			console.log('Analysis of Yandex results failed... ');
+			yDeferred.reject();
 		} else {
 			console.log('Analysis of Yandex results successful!');
+			yDeferred.resolve();
 		}
 
-		if (exec('./word_align.pl audio/reference.txt results/hyp_google.txt > results/google_results.txt', {silent:true}).code !== 0) {
+		if (exec('./word_align.pl audio/reference.txt results/hyp_google.txt > results/google_results.txt').code !== 0) {
 			console.log('Analysis of Google results failed... ');
+			gDeferred.reject();
 		} else {
 			console.log('Analysis of Google results successful!');
+			gDeferred.resolve();
 		}
 
+		return Q.all([gDeferred.promise, yDeferred.promise]);
+
+	}).catch(function(error) {
+		console.log(error);
 	}).done(function() {
 		// Show results of word_align.pl in terminal
 
