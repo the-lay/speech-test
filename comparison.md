@@ -49,7 +49,7 @@ Also, I've found interesting question in the FAQ section of Yandex Speech Kit do
 >>**Возможно ли использовать эту систему для обработки массивов уже записанного звука?**  
 Если у вас есть такие задачи, [напишите нам](http://feedback2.yandex.ru/cloud-api/).
 
-Meaning that it is possible to work closely with Yandex to transcribe array of already recorded audio files and this might be of interest to the LETA speech recognition project.
+Meaning that it is possible to work closely with Yandex to transcribe array of already recorded audio files and this might be of interest to the your project.
 
 
 [1]:http://stackoverflow.com/questions/14257598/what-are-language-codes-for-voice-recognition-languages-in-chromes-implementati/14302134#14302134
