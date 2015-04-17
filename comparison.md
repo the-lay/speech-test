@@ -3,7 +3,7 @@
 ### Feature comparison
 
 |Feature|Yandex Speech Kit|Google Speech API|
-|:-|:-:|:-:|
+|:-:|:-:|:-:|
 |Quotas and pricing|1000req / 5$|50req / day|
 |Formats|speex, 16-bit PCM, alaw, wav, mpeg-3|flac, 16-bit PCM|
 |Request format|HTTPS POST|HTTPS POST|
