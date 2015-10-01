@@ -1,7 +1,7 @@
-chmod +x yandex_speech.sh
-chmod +x google_speech.sh
-./yandex_speech.sh
-./google_speech.sh
+chmod +x yandex_speech.sh  
+chmod +x google_speech.sh  
+./yandex_speech.sh  
+./google_speech.sh  
 
 
 # Google Speech API & Yandex Speech Kit
